@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFind - Classroom Lost and Found Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-icon"><i class="fas fa-search-location"></i></span>
+        <span>SmartFind</span>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="search.html">Search Items</a></li>
+        <li><a href="report-lost.html">Report Lost</a></li>
+        <li><a href="report-found.html">Report Found</a></li>
+        <li id="navDashboardLink" style="display: none;"><a href="dashboard.html">Dashboard</a></li>
+        <li id="navAdminLink" style="display: none;"><a href="admin.html">Admin Panel</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div style="position: relative;" id="notifWrapper">
+          <button class="notif-bell-btn" id="notifBellBtn" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge" id="notifCount">0</span>
+          </button>
+          <div class="notif-dropdown" id="notifDropdown">
+            <div class="notif-header">
+              <strong>Notifications</strong>
+              <button class="btn btn-sm btn-secondary" id="clearNotifsBtn">Clear</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+          </div>
+        </div>
+
+        <div id="authNavContainer">
+          <a href="login.html" class="btn btn-primary btn-sm">Login</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="main-wrapper">
+    <div class="card" style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; margin-bottom: 2rem; padding: 3rem 2rem;">
+      <div style="max-width: 700px;">
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; margin-bottom: 1rem;">Classroom Edition</span>
+        <h1 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">Lost Something in Class? We'll Help You Find It.</h1>
+        <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 1.5rem;">
+          SmartFind connects students who have lost personal classroom items with those who have found them using automated smart item matching.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="report-lost.html" class="btn" style="background: #ef4444; color: white;"><i class="fas fa-exclamation-circle"></i> Report Lost Item</a>
+          <a href="report-found.html" class="btn" style="background: #10b981; color: white;"><i class="fas fa-hand-holding-heart"></i> Report Found Item</a>
+          <a href="search.html" class="btn btn-secondary"><i class="fas fa-search"></i> Search Catalog</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-question"></i></div>
+        <div class="stat-info">
+          <h4>Total Lost Items</h4>
+          <div class="stat-value" id="homeTotalLost">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-check"></i></div>
+        <div class="stat-info">
+          <h4>Total Found Items</h4>
+          <div class="stat-value" id="homeTotalFound">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber"><i class="fas fa-clone"></i></div>
+        <div class="stat-info">
+          <h4>Matches Generated</h4>
+          <div class="stat-value" id="homeTotalMatches">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-shield-alt"></i></div>
+        <div class="stat-info">
+          <h4>Returned Items</h4>
+          <div class="stat-value" id="homeTotalReturned">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <h2 style="margin-bottom: 1.5rem; text-align: center;">How Classroom SmartFind Works</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; text-align: center;">
+        <div>
+          <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fas fa-edit"></i></div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.35rem;">1. Report the Item</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Lost your calculator or found an ID card? Submit detailed marks and location.</p>
+        </div>
+        <div>
+          <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: 0.5rem;"><i class="fas fa-brain"></i></div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.35rem;">2. Smart Matching</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Our algorithm scores name, color, category, and classroom location to suggest matches.</p>
+        </div>
+        <div>
+          <div style="font-size: 2.5rem; color: var(--info); margin-bottom: 0.5rem;"><i class="fas fa-shield-alt"></i></div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.35rem;">3. Submit Verification Claim</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Answer security questions to prove actual ownership of the item.</p>
+        </div>
+        <div>
+          <div style="font-size: 2.5rem; color: var(--success); margin-bottom: 0.5rem;"><i class="fas fa-hands-helping"></i></div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.35rem;">4. Secure Classroom Handover</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Admin verifies the claim and marks the item returned once delivered.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Classroom Reports -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2>Recent Classroom Reports</h2>
+      <a href="search.html" class="btn btn-secondary btn-sm">View All Items &rarr;</a>
+    </div>
+    <div class="item-grid" id="homeRecentItems"></div>
+  </main>
+
+  <footer class="footer">
+    <p>SmartFind – Classroom Lost and Found Management System &copy; 2026. Academic Project.</p>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppNav();
+      
+      const stats = StorageService.getStats();
+      document.getElementById('homeTotalLost').textContent = stats.lost;
+      document.getElementById('homeTotalFound').textContent = stats.found;
+      document.getElementById('homeTotalMatches').textContent = stats.matches;
+      document.getElementById('homeTotalReturned').textContent = stats.returned;
+
+      const items = StorageService.getItems();
+      const recentContainer = document.getElementById('homeRecentItems');
+      const recentSix = items.slice(-6).reverse();
+
+      if(recentSix.length === 0) {
+        recentContainer.innerHTML = `<div class="empty-state"><p>No items reported yet.</p></div>`;
+      } else {
+        recentContainer.innerHTML = recentSix.map(item => `
+          <div class="item-card">
+            <img src="${item.imageUrl || 'https://via.placeholder.com/300x180?text=No+Photo'}" class="item-card-image" alt="${item.name}">
+            <div class="item-card-body">
+              <div class="item-card-meta">
+                <span class="badge badge-${item.type === 'lost' ? 'lost' : 'found'}">${item.type.toUpperCase()}</span>
+                <span class="badge badge-${item.status.toLowerCase().replace(' ', '')}">${item.status}</span>
+              </div>
+              <h3 class="item-card-title">${item.name}</h3>
+              <p class="item-card-desc">${item.description}</p>
+              <div class="item-card-info-row"><i class="fas fa-map-marker-alt"></i> ${item.location}</div>
+              <div class="item-card-info-row"><i class="fas fa-calendar-alt"></i> ${item.date}</div>
+              <div class="item-card-footer">
+                <a href="item-details.html?id=${item.id}" class="btn btn-primary btn-sm btn-block">View Details</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>

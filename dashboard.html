@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - SmartFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-icon"><i class="fas fa-search-location"></i></span>
+        <span>SmartFind</span>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Search Items</a></li>
+        <li><a href="report-lost.html">Report Lost</a></li>
+        <li><a href="report-found.html">Report Found</a></li>
+        <li><a href="dashboard.html" class="active">Student Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div style="position: relative;" id="notifWrapper">
+          <button class="notif-bell-btn" id="notifBellBtn">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge" id="notifCount">0</span>
+          </button>
+          <div class="notif-dropdown" id="notifDropdown">
+            <div class="notif-header">
+              <strong>Notifications</strong>
+              <button class="btn btn-sm btn-secondary" id="clearNotifsBtn">Clear</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+          </div>
+        </div>
+
+        <div id="authNavContainer"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrapper">
+    <!-- Welcome Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 id="welcomeUserText">Student Dashboard</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Track your reported items, automated match suggestions, and claim progress.</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="report-lost.html" class="btn btn-danger btn-sm"><i class="fas fa-plus"></i> Report Lost</a>
+        <a href="report-found.html" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Report Found</a>
+      </div>
+    </div>
+
+    <!-- Analytics Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Classroom Items: Lost vs Found</h3>
+        <div class="chart-box">
+          <canvas id="ratioChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Items by Category Breakdown</h3>
+        <div class="chart-box">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Navigation Tabs -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchStudentTab('lostTab', this)">My Lost Items (<span id="userLostCount">0</span>)</button>
+      <button class="tab-btn" onclick="switchStudentTab('foundTab', this)">My Found Items (<span id="userFoundCount">0</span>)</button>
+      <button class="tab-btn" onclick="switchStudentTab('matchesTab', this)">Smart Matches (<span id="userMatchCount">0</span>)</button>
+      <button class="tab-btn" onclick="switchStudentTab('claimsTab', this)">My Submitted Claims</button>
+    </div>
+
+    <!-- Tab 1: My Lost Items -->
+    <section id="lostTab" class="dashboard-tab-content">
+      <div class="item-grid" id="myLostGrid"></div>
+    </section>
+
+    <!-- Tab 2: My Found Items -->
+    <section id="foundTab" class="dashboard-tab-content" style="display: none;">
+      <div class="item-grid" id="myFoundGrid"></div>
+    </section>
+
+    <!-- Tab 3: Suggested Matches -->
+    <section id="matchesTab" class="dashboard-tab-content" style="display: none;">
+      <div id="smartMatchesContainer"></div>
+    </section>
+
+    <!-- Tab 4: My Claims -->
+    <section id="claimsTab" class="dashboard-tab-content" style="display: none;">
+      <div class="card table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Claim ID</th>
+              <th>Target Item</th>
+              <th>Date Submitted</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="myClaimsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>SmartFind Classroom Lost and Found &copy; 2026</p>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    function switchStudentTab(tabId, btn) {
+      document.querySelectorAll('.dashboard-tab-content').forEach(c => c.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).style.display = 'block';
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Details - SmartFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-icon"><i class="fas fa-search-location"></i></span>
+        <span>SmartFind</span>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Search Items</a></li>
+        <li><a href="report-lost.html">Report Lost</a></li>
+        <li><a href="report-found.html">Report Found</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="authNavContainer"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrapper" id="itemDetailsContainer">
+    <!-- Populated dynamically via JS -->
+  </main>
+
+  <!-- Claim Submission Modal -->
+  <div class="modal-overlay" id="claimModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="claimModalTitle">Claim Item Verification</h3>
+        <button class="modal-close" onclick="closeClaimModal()">&times;</button>
+      </div>
+      <form id="claimSubmitForm">
+        <div class="modal-body">
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            To ensure genuine return, please answer these verification questions. The classroom admin verifies your responses before handover.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="claimColorAnswer">1. Confirm exact color and physical appearance *</label>
+            <input type="text" id="claimColorAnswer" class="form-control" placeholder="e.g. Matte black with yellow marks" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claimMarksAnswer">2. What unique mark, scratch, or label does it have? *</label>
+            <textarea id="claimMarksAnswer" class="form-control" rows="2" placeholder="e.g. Barcode number ending in 4402 on underside" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claimExtraAnswer">3. When and where did you lose it? Any extra proof?</label>
+            <textarea id="claimExtraAnswer" class="form-control" rows="2" placeholder="e.g. During 2nd hour in Classroom 3 on Monday"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeClaimModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Claim to Admin</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>SmartFind Classroom Lost and Found &copy; 2026</p>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/claims.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppNav();
+      renderItemDetails();
+    });
+
+    function renderItemDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const itemId = params.get('id');
+      const container = document.getElementById('itemDetailsContainer');
+
+      if (!itemId) {
+        container.innerHTML = `<div class="card empty-state"><h2>Item Not Specified</h2><p><a href="search.html">Go to Search</a></p></div>`;
+        return;
+      }
+
+      const item = StorageService.getItemById(itemId);
+      if (!item) {
+        container.innerHTML = `<div class="card empty-state"><h2>Item Not Found</h2><p>This item does not exist or has been deleted.</p><a href="search.html" class="btn btn-primary btn-sm" style="margin-top:1rem;">Back to Directory</a></div>`;
+        return;
+      }
+
+      const currentUser = AuthService.getCurrentUser();
+      const isOwner = currentUser && (currentUser.id === item.reportedBy);
+      const isAdmin = currentUser && (currentUser.role === 'admin');
+
+      // Check if current user already submitted a claim on this item
+      const existingClaim = currentUser ? StorageService.getClaims().find(c => c.itemId === item.id && c.claimantId === currentUser.id) : null;
+
+      // Smart Matching Suggestions for this item
+      const matches = MatchingEngine.findMatchesForItem(item);
+
+      container.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;" class="item-details-layout">
+          <!-- Left: Image & Quick Status -->
+          <div>
+            <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem;">
+              <img src="${item.imageUrl || 'https://via.placeholder.com/600x400?text=No+Photo'}" alt="${item.name}" style="width: 100%; max-height: 420px; object-fit: cover; display: block;">
+            </div>
+
+            <!-- Possible Matches Card -->
+            <div class="card">
+              <h3><i class="fas fa-robot" style="color: var(--primary);"></i> Smart Match Suggestions</h3>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Automated comparisons against opposite reports.</p>
+              ${matches.length === 0 ? '<p style="font-size: 0.85rem; color: var(--text-muted);">No candidate matches discovered yet.</p>' : `
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                  ${matches.map(m => `
+                    <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                      <div>
+                        <strong>${m.candidateItem.name}</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">${m.candidateItem.location} &bull; ${m.candidateItem.color}</div>
+                      </div>
+                      <div style="text-align: right;">
+                        <span class="match-score-badge">${m.score}% Match</span>
+                        <div><a href="item-details.html?id=${m.candidateItem.id}" style="font-size: 0.8rem;">Inspect &rarr;</a></div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            </div>
+          </div>
+
+          <!-- Right: Metadata & Actions -->
+          <div>
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span class="badge badge-${item.type === 'lost' ? 'lost' : 'found'}">${item.type.toUpperCase()}</span>
+                <span class="badge badge-${item.status.toLowerCase().replace(' ', '')}">${item.status}</span>
+              </div>
+
+              <h1 style="font-size: 1.85rem; margin-bottom: 0.75rem;">${item.name}</h1>
+              <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem;">${item.description}</p>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                  <small style="color: var(--text-muted);">Category</small>
+                  <p><strong>${item.category}</strong></p>
+                </div>
+                <div>
+                  <small style="color: var(--text-muted);">Location</small>
+                  <p><strong>${item.location}</strong></p>
+                </div>
+                <div>
+                  <small style="color: var(--text-muted);">Date & Time</small>
+                  <p><strong>${item.date} ${item.time || ''}</strong></p>
+                </div>
+                <div>
+                  <small style="color: var(--text-muted);">Color / Brand</small>
+                  <p><strong>${item.color || 'N/A'} / ${item.brand || 'N/A'}</strong></p>
+                </div>
+                <div>
+                  <small style="color: var(--text-muted);">Reported By</small>
+                  <p><strong>${item.reporterName}</strong></p>
+                </div>
+                <div>
+                  <small style="color: var(--text-muted);">Contact</small>
+                  <p><strong>${item.contact}</strong></p>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                ${item.type === 'found' && !isOwner && item.status !== 'Returned' ? `
+                  ${existingClaim ? `
+                    <button class="btn btn-secondary" disabled><i class="fas fa-clock"></i> Claim Status: ${existingClaim.status}</button>
+                  ` : `
+                    <button class="btn btn-primary" onclick="openClaimModal('${item.id}', '${item.name.replace(/'/g, "\\'")}')">
+                      <i class="fas fa-hand-paper"></i> Claim This Item
+                    </button>
+                  `}
+                ` : ''}
+
+                ${isOwner || isAdmin ? `
+                  <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}')">
+                    <i class="fas fa-trash"></i> Delete Report
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openClaimModal(id, name) {
+      if(!AuthService.isLoggedIn()) {
+        showToast('Please login to file an item ownership claim.', 'danger');
+        setTimeout(() => window.location.href = 'login.html', 1200);
+        return;
+      }
+      window.activeClaimItemId = id;
+      document.getElementById('claimModalTitle').textContent = `Claim: ${name}`;
+      document.getElementById('claimModal').classList.add('open');
+    }
+
+    function closeClaimModal() {
+      document.getElementById('claimModal').classList.remove('open');
+    }
+
+    document.getElementById('claimSubmitForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const currentUser = AuthService.getCurrentUser();
+      const itemId = window.activeClaimItemId;
+      const color = document.getElementById('claimColorAnswer').value.trim();
+      const marks = document.getElementById('claimMarksAnswer').value.trim();
+      const extra = document.getElementById('claimExtraAnswer').value.trim();
+
+      const newClaim = {
+        itemId: itemId,
+        claimantId: currentUser.id,
+        claimantName: currentUser.name,
+        claimantContact: currentUser.phone || currentUser.email,
+        answers: {
+          color: color,
+          uniqueMarks: marks,
+          additionalProof: extra
+        }
+      };
+
+      StorageService.saveClaim(newClaim);
+      // Update item status to Claim Pending
+      StorageService.updateItemStatus(itemId, 'Claim Pending');
+      
+      closeClaimModal();
+      showToast('Ownership claim submitted successfully! Admin will review.', 'success');
+      setTimeout(() => renderItemDetails(), 1000);
+    });
+
+    function deleteItem(itemId) {
+      if(confirm('Are you sure you want to remove this item report?')) {
+        StorageService.deleteItem(itemId);
+        showToast('Item deleted successfully.');
+        setTimeout(() => window.location.href = 'search.html', 1000);
+      }
+    }
+  </script>
+</body>
+</html>

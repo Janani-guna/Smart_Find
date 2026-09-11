@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - SmartFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-icon"><i class="fas fa-shield-alt"></i></span>
+        <span>SmartFind Admin</span>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Live Home</a></li>
+        <li><a href="search.html">Search Catalog</a></li>
+        <li><a href="admin.html" class="active">Teacher Admin Panel</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="authNavContainer"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrapper">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap;">
+      <div>
+        <h1>Classroom Administration Console</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Manage classroom claims, approve handovers, and monitor items.</p>
+      </div>
+      <div>
+        <button class="btn btn-secondary btn-sm" onclick="AdminPanel.resetDatabasePrompt()">
+          <i class="fas fa-undo"></i> Reset to Sample Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin KPI Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+          <h4>Total Users</h4>
+          <div class="stat-value" id="admTotalUsers">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-question-circle"></i></div>
+        <div class="stat-info">
+          <h4>Lost Items</h4>
+          <div class="stat-value" id="admTotalLost">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+          <h4>Found Items</h4>
+          <div class="stat-value" id="admTotalFound">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-info">
+          <h4>Pending Claims</h4>
+          <div class="stat-value" id="admTotalClaims">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-award"></i></div>
+        <div class="stat-info">
+          <h4>Returned</h4>
+          <div class="stat-value" id="admTotalReturned">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchAdminTab('admClaimsTab', this)">Pending Claims Management</button>
+      <button class="tab-btn" onclick="switchAdminTab('admItemsTab', this)">All Reported Items</button>
+    </div>
+
+    <!-- Tab 1: Claims Management -->
+    <section id="admClaimsTab" class="admin-tab-content">
+      <div class="card table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Claimant</th>
+              <th>Target Item</th>
+              <th>Proof Provided</th>
+              <th>Submitted</th>
+              <th>Current Status</th>
+              <th>Decisions / Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admClaimsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tab 2: All Items Inventory -->
+    <section id="admItemsTab" class="admin-tab-content" style="display: none;">
+      <div class="card table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID & Name</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Reporter</th>
+              <th>Status</th>
+              <th>Manage</th>
+            </tr>
+          </thead>
+          <tbody id="admItemsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>SmartFind Admin Portal &copy; 2026</p>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    function switchAdminTab(tabId, btn) {
+      document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).style.display = 'block';
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

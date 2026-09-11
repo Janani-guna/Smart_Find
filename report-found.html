@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Found Item - SmartFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-icon"><i class="fas fa-search-location"></i></span>
+        <span>SmartFind</span>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Search Items</a></li>
+        <li><a href="report-lost.html">Report Lost</a></li>
+        <li><a href="report-found.html" class="active">Report Found</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="authNavContainer"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrapper" style="max-width: 760px;">
+    <div class="card">
+      <div style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <span class="badge badge-found" style="margin-bottom: 0.5rem;">Found Submission</span>
+        <h2>Report a Found Classroom Item</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Help return items to fellow students. Fill in where and when you found it.</p>
+      </div>
+
+      <form id="foundItemForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="foundName">Item Name *</label>
+            <input type="text" id="foundName" class="form-control" placeholder="e.g. Scientific Calculator" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="foundCategory">Category *</label>
+            <select id="foundCategory" class="form-control" required>
+              <option value="">Choose category</option>
+              <option value="ID Card">ID Card</option>
+              <option value="Books">Books</option>
+              <option value="Calculator">Calculator</option>
+              <option value="Mobile Phone">Mobile Phone</option>
+              <option value="Earphones">Earphones</option>
+              <option value="Wallet">Wallet</option>
+              <option value="Keys">Keys</option>
+              <option value="Bag">Bag</option>
+              <option value="Water Bottle">Water Bottle</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="foundDescription">Description *</label>
+          <textarea id="foundDescription" class="form-control" rows="3" placeholder="Brief visual overview (avoid disclosing all unique secrets so owner can verify)" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="foundDate">Date Found *</label>
+            <input type="date" id="foundDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="foundTime">Time Found</label>
+            <input type="time" id="foundTime" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="foundLocation">Location Found *</label>
+            <input type="text" id="foundLocation" class="form-control" placeholder="e.g. Classroom 3, desk row 4" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="foundColor">Color *</label>
+            <input type="text" id="foundColor" class="form-control" placeholder="e.g. Black" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="foundBrand">Brand</label>
+            <input type="text" id="foundBrand" class="form-control" placeholder="e.g. Casio">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="foundContact">Finder Contact Number / Desk *</label>
+            <input type="tel" id="foundContact" class="form-control" placeholder="e.g. 9876543212" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="foundUniqueMarks">Private Marks Observed (For Claim Verification)</label>
+          <input type="text" id="foundUniqueMarks" class="form-control" placeholder="e.g. Has barcode label sticker, small chip at bottom left">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="foundImageFile">Item Photo (Upload or Paste URL)</label>
+          <input type="file" id="foundImageFile" class="form-control" accept="image/*" style="margin-bottom: 0.5rem;">
+          <input type="url" id="foundImageUrl" class="form-control" placeholder="Or paste photo link (https://...)">
+          <div id="foundImagePreviewContainer" style="margin-top: 0.75rem; display: none;">
+            <img id="foundImagePreview" src="" alt="Preview" style="max-height: 160px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+          <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i> Submit Found Report</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/found.js"></script>
+</body>
+</html>

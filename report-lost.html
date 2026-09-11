@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Lost Item - SmartFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-icon"><i class="fas fa-search-location"></i></span>
+        <span>SmartFind</span>
+      </a>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Search Items</a></li>
+        <li><a href="report-lost.html" class="active">Report Lost</a></li>
+        <li><a href="report-found.html">Report Found</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="authNavContainer"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrapper" style="max-width: 760px;">
+    <div class="card">
+      <div style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <span class="badge badge-lost" style="margin-bottom: 0.5rem;">Missing Report Form</span>
+        <h2>Report a Lost Classroom Item</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Provide accurate attributes. Our smart algorithm automatically pairs your entry against reported found items.</p>
+      </div>
+
+      <form id="lostItemForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="lostName">Item Name *</label>
+            <input type="text" id="lostName" class="form-control" placeholder="e.g. Casio Calculator FX-991EX" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lostCategory">Category *</label>
+            <select id="lostCategory" class="form-control" required>
+              <option value="">Choose category</option>
+              <option value="ID Card">ID Card</option>
+              <option value="Books">Books</option>
+              <option value="Calculator">Calculator</option>
+              <option value="Mobile Phone">Mobile Phone</option>
+              <option value="Earphones">Earphones</option>
+              <option value="Wallet">Wallet</option>
+              <option value="Keys">Keys</option>
+              <option value="Bag">Bag</option>
+              <option value="Water Bottle">Water Bottle</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lostDescription">Description *</label>
+          <textarea id="lostDescription" class="form-control" rows="3" placeholder="Provide general details like condition, stickers, contents..." required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="lostDate">Date Lost *</label>
+            <input type="date" id="lostDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lostTime">Estimated Time</label>
+            <input type="time" id="lostTime" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="lostLocation">Classroom / Campus Location *</label>
+            <input type="text" id="lostLocation" class="form-control" placeholder="e.g. Classroom 3, 2nd Bench or Library" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lostColor">Primary Color *</label>
+            <input type="text" id="lostColor" class="form-control" placeholder="e.g. Black, Blue, Silver" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="lostBrand">Brand / Manufacturer</label>
+            <input type="text" id="lostBrand" class="form-control" placeholder="e.g. Casio, Apple, Milton, Classmate">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lostContact">Your Phone / Contact Info *</label>
+            <input type="tel" id="lostContact" class="form-control" placeholder="e.g. 9876543210" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lostUniqueMarks">Unique Mark or Secret Detail</label>
+          <input type="text" id="lostUniqueMarks" class="form-control" placeholder="e.g. Scratch on screen, barcode ending 4402, key ring with red ribbon">
+          <p class="form-help">This is used as proof when you claim or verify your item.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lostImage">Item Photo (Upload or Paste URL)</label>
+          <input type="file" id="lostImageFile" class="form-control" accept="image/*" style="margin-bottom: 0.5rem;">
+          <input type="url" id="lostImageUrl" class="form-control" placeholder="Or paste an image web link (https://...)">
+          <div id="lostImagePreviewContainer" style="margin-top: 0.75rem; display: none;">
+            <img id="lostImagePreview" src="" alt="Preview" style="max-height: 160px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+          <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-danger"><i class="fas fa-bullhorn"></i> Submit Lost Report</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/matching.js"></script>
+  <script src="js/lost.js"></script>
+</body>
+</html>
